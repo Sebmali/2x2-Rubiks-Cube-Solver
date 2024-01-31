@@ -2,26 +2,27 @@ from Corner import Corner
 
 CORNERS = ["Front-Right-Top", "Front-Left-Top", "Back-Left-Top", "Back-Right-Top", "Front-Right-Bottom", "Front-Left-Bottom", "Back-Left-Bottom", "Back-Right-Bottom"]
 COLORS = ["W", "G", "R", "B", "O", "Y"]
-FINAL_CUBE = [
-    Corner(['W', 'O', 'G']), #Front-Right-Top
-    Corner(('W', 'B', 'O')), #Front-Left-Top
-    Corner(('W', 'R', 'B')), #Back-Left-Top
-    Corner(('W', 'G', 'R')), #Back-Right-Top
-    Corner(('Y', 'G', 'R')), #Front-Right-Bottom
-    Corner(('Y', 'O', 'G')), #Front-Left-Bottom
-    Corner(('Y', 'B', 'O')), #Back-Left-Bottom
-    Corner(('Y', 'R', 'B')) #Back-Right-Bottom
-]
-VALID_COMBINATIONS = [
-    #This will be where the valid combinations go if this is the route we take.
-]
+FINAL_CUBE = {
+    Corner(['R', 'W', 'B']), #Front-Right-Top
+    Corner(['R', 'W', 'G']), #Front-Left-Top
+    Corner(['O', 'W', 'G']), #Back-Left-Top
+    Corner(['O', 'W', 'B']), #Back-Right-Top    
+    Corner(['R', 'Y', 'B']), #Front-Right-Bottom
+    Corner(['R', 'Y', 'G']), #Front-Left-Bottom
+    Corner(['O', 'Y', 'G']), #Back-Left-Bottom
+    Corner(['O', 'Y', 'B']) #Back-Right-Bottom
+}
 
 class Cube:
     def __init__(self):
         self.cube = self.set_initial_state()
+        self.max_depth = 15
 
     def is_solved(self):
-        return all(corner.colors[0] == self.corners[0].colors[0] for corner in self.corners)
+        for i in length(FINAL_CUBE):
+            if self.cube[i].colors != FINAL_CUBE[i].colors:
+                return False
+        return True
 
     def get_corner(self, corner):
         return self.cube[corner]
@@ -39,27 +40,14 @@ class Cube:
         for corner in CORNERS:
             while True:
                 corner_colors = input("Enter the colors of the " + corner + " corner: ").strip().upper().split()
-                if self.is_valid_corner(corner_colors):
+                corner_combo = Corner(corner_colors)
+                if corner_combo.is_valid_corner():
                     corners.append(Corner(corner_colors))
                     break
                 else:
                     print("Invalid corner colors. Please try again.")
 
         return corners
-
-    def is_valid_corner(self, corner_colors):
-        if len(corner_colors) != 3:
-            return False
-
-        if not all(color in COLORS for color in corner_colors):
-            return False
-
-        return self.is_valid_combination(corner_colors)
-
-    def is_valid_combination(self, corner_colors):
-        # Will need to implement something to check if the combination is valid based on orientation and color comibanations
-        return True
-
 
     def print_cube(self):
         for corner in self.cube:
@@ -115,4 +103,46 @@ class Cube:
         # This will be the function that rotates the back counter clockwise
         return True
 
+    def solve_cube(self):
+        for depth in range(1,self.max_depth):
+            result = self.depth_limited_search(self.cube, depth)
+            if result is not None:
+                return result
+
+    def depth_limited_search(self, cube, depth):
+        if self.is_solved():
+            return [] #This will be the solution path
+
+        if depth == 0:
+            return None
+
+        for step in range(1,12):
+            if step == 1:
+                self.right_vertical_up()
+            elif step == 2:
+                self.right_vertical_down()
+            elif step == 3:
+                self.left_vertical_up()
+            elif step == 4:
+                self.left_vertical_down()
+            elif step == 5:
+                self.top_horizontal_right()
+            elif step == 6:
+                self.top_horizontal_left()
+            elif step == 7:
+                self.bottom_horizontal_right()
+            elif step == 8:
+                self.bottom_horizontal_left()
+            elif step == 9:
+                self.front_clockwise()
+            elif step == 10:
+                self.front_counter_clockwise()
+            elif step == 11:
+                self.back_clockwise()
+            elif step == 12:
+                self.back_counter_clockwise()
+            
+            result = self.depth_limited_search(cube, depth + 1)
+            if result is not None:
+                return result
     
