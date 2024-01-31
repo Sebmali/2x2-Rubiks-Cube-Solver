@@ -67,52 +67,217 @@ class Cube:
 
 #These are the 12 possible steps that are available at each step of the search. 
 
+   #CORNERS = ["Front-Right-Top", "Front-Left-Top", "Back-Left-Top", "Back-Right-Top", "Front-Right-Bottom", "Front-Left-Bottom", "Back-Left-Bottom", "Back-Right-Bottom"]
+
+#These are the 12 possible steps that are available at each step of the search. 
+
+
     def right_vertical_up(self):
         # This will be the function that rotates the right vertical up
+        # FBR -> FTR, FTR -> BTR, BBR -> FBR and BTR -> BBR with each corners first two elements swaping, so [R, G, B] -> [G, R, B]
+
+        #temp for a single corner in order to swap 
+        temp_FTR = self.cube[0]
+        temp_BTR = self.cube[3]
+        temp_FBR = self.cube[4]
+        temp_BBR = self.cube[7]
+
+        # I want to first swap the appropriate corners then swap the necessary colors
+        #create a swap function for corner that swaps the colors and returns a new corner
+        self.cube[0] = self.swap_first_two(temp_FBR) # we would send self.cube[4] through the swap function 
+        self.cube[3] = self.swap_first_two(temp_FTR) # swap
+        self.cube[4] = self.swap_first_two(temp_BBR) # swap
+        self.cube[7] = self.swap_first_two(temp_BTR) # swap
+
+        #do we need to return the new cube? or is it pass by ref
+
         return True
     
     def right_vertical_down(self):
         # This will be the function that rotates the right vertical down
+        
+        temp_FTR = self.cube[0]
+        temp_BTR = self.cube[3]
+        temp_FBR = self.cube[4]
+        temp_BBR = self.cube[7]
+
+        self.cube[0] = self.swap_first_two(temp_BTR) 
+        self.cube[3] = self.swap_first_two(temp_BBR) 
+        self.cube[4] = self.swap_first_two(temp_FTR)
+        self.cube[7] = self.swap_first_two(temp_FBR)
+
         return True
     
     def left_vertical_up(self):
         # This will be the function that rotates the left vertical up
+        
+        temp_FTL = self.cube[1]
+        temp_BTL = self.cube[2]
+        temp_FBL = self.cube[5]
+        temp_BBL = self.cube[6]
+
+        self.cube[1] = self.swap_first_two(temp_FBL) 
+        self.cube[2] = self.swap_first_two(temp_FTL)
+        self.cube[5] = self.swap_first_two(temp_BBL)
+        self.cube[6] = self.swap_first_two(temp_BTL)
+        
         return True
 
     def left_vertical_down(self):
         # This will be the function that rotates the left vertical down
+        
+        temp_FTL = self.cube[1]
+        temp_BTL = self.cube[2]
+        temp_FBL = self.cube[5]
+        temp_BBL = self.cube[6]
+
+        self.cube[1] = self.swap_first_two(temp_BTL)
+        self.cube[2] = self.swap_first_two(temp_BBL)
+        self.cube[5] = self.swap_first_two(temp_FTL)
+        self.cube[6] = self.swap_first_two(temp_FBL)
+        
         return True
 
     def top_horizontal_right(self):
         # This will be the function that rotates the top horizontal right
+        
+        temp_FTR = self.cube[0]
+        temp_FTL = self.cube[1]
+        temp_BTL = self.cube[2]
+        temp_BTR = self.cube[3]
+
+        self.cube[0] = self.swap_first_last(temp_FTL) 
+        self.cube[1] = self.swap_first_last(temp_BTL)
+        self.cube[2] = self.swap_first_last(temp_BTR)
+        self.cube[3] = self.swap_first_last(temp_FTR)
+        
         return True
 
     def top_horizontal_left(self):
         # This will be the function that rotates the top horizontal left
+        
+        temp_FTR = self.cube[0]
+        temp_FTL = self.cube[1]
+        temp_BTL = self.cube[2]
+        temp_BTR = self.cube[3]
+
+        self.cube[0] = self.swap_first_last(temp_BTR) 
+        self.cube[1] = self.swap_first_last(temp_FTR)
+        self.cube[2] = self.swap_first_last(temp_FTL)
+        self.cube[3] = self.swap_first_last(temp_BTL)
+        
         return True
 
     def bottom_horizontal_right(self):
         # This will be the function that rotates the bottom horizontal right
+        
+        temp_FBR = self.cube[4]
+        temp_FBL = self.cube[5]
+        temp_BBL = self.cube[6]
+        temp_BBR = self.cube[7]
+
+        self.cube[4] = self.swap_first_last(temp_FBL) 
+        self.cube[5] = self.swap_first_last(temp_BBL)
+        self.cube[6] = self.swap_first_last(temp_BBR)
+        self.cube[7] = self.swap_first_last(temp_FBR)
+        
         return True
 
     def bottom_horizontal_left(self):
         # This will be the function that rotates the bottom horizontal left
+        
+        temp_FBR = self.cube[4]
+        temp_FBL = self.cube[5]
+        temp_BBL = self.cube[6]
+        temp_BBR = self.cube[7]
+        
+
+        self.cube[4] = self.swap_first_last(temp_BBR)
+        self.cube[5] = self.swap_first_last(temp_FBR)
+        self.cube[6] = self.swap_first_last(temp_FBL)
+        self.cube[7] = self.swap_first_last(temp_BBL)
+        
         return True
 
     def front_clockwise(self):
         # This will be the function that rotates the front clockwise
+        
+        temp_FTR = self.cube[0]
+        temp_FTL = self.cube[1]
+        temp_FBL = self.cube[5]
+        temp_FBR = self.cube[4]
+
+        self.cube[0] = self.swap_last_two(temp_FTL)
+        self.cube[1] = self.swap_last_two(temp_FBL)
+        self.cube[4] = self.swap_last_two(temp_FTR)
+        self.cube[5] = self.swap_last_two(temp_FBR)
+        
         return True    
 
     def front_counter_clockwise(self):
         # This will be the function that rotates the front counter clockwise
+        
+        temp_FTR = self.cube[0]
+        temp_FTL = self.cube[1]
+        temp_FBL = self.cube[5]
+        temp_FBR = self.cube[4]
+
+        self.cube[0] = self.swap_last_two(temp_FBR)
+        self.cube[1] = self.swap_last_two(temp_FTR)
+        self.cube[4] = self.swap_last_two(temp_FBL)
+        self.cube[5] = self.swap_last_two(temp_FTL)
+        
         return True
 
     def back_clockwise(self):
         # This will be the function that rotates the back clockwise
+        
+        temp_BTL = self.cube[2]
+        temp_BTR = self.cube[3]
+        temp_BBR = self.cube[7]
+        temp_BBL = self.cube[6]
+
+        self.cube[2] = self.swap_last_two(temp_BBL)
+        self.cube[3] = self.swap_last_two(temp_BTL)
+        self.cube[6] = self.swap_last_two(temp_BBR)
+        self.cube[7] = self.swap_last_two(temp_BTR)
+        
         return True
 
     def back_counter_clockwise(self):
         # This will be the function that rotates the back counter clockwise
+        
+        temp_BTL = self.cube[2]
+        temp_BTR = self.cube[3]
+        temp_BBR = self.cube[7]
+        temp_BBL = self.cube[6]
+
+        self.cube[2] = self.swap_last_two(temp_BTR)
+        self.cube[3] = self.swap_last_two(temp_BBR)
+        self.cube[6] = self.swap_last_two(temp_BTL)
+        self.cube[7] = self.swap_last_two(temp_BBL)
+        
         return True
 
+    def swap_first_two(self, corner):
+        temp = corner.colors[0]
+        corner.colors[0] = corner.colors[1]
+        corner.colors[1] = temp
+
+        return corner
+
+    def swap_last_two(self, corner):
+        temp = corner.colors[2]
+        corner.colors[2] = corner.colors[1]
+        corner.colors[1] = temp
+
+        return corner
     
+    def swap_first_last(self, corner):
+        temp = corner.colors[0]
+        corner.colors[0] = corner.colors[2]
+        corner.colors[2] = temp
+
+        return corner
+    
+
