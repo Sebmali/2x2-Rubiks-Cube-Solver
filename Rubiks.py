@@ -21,8 +21,59 @@ class Cube:
         self.cube = self.set_initial_state()
 
     def is_solved(self):
-        return all(corner.colors[0] == self.corners[0].colors[0] for corner in self.corners)
+        #Create 6 functions that check if each side is solved
+        if self.front_side_solved() and self.back_side_solved() and self.top_side_solved() and self.bottom_side_solved() and self.right_side_solved() and self.left_side_solved():
+            return True
+        return False
 
+    def front_side_solved(self):
+        # This will be the function that checks if the front side is solved
+        if self.cube[0].colors[0] == self.cube[1].colors[0] == self.cube[4].colors[0] == self.cube[5].colors[0]:
+            return True
+    
+        return False
+    
+    def back_side_solved(self):
+        # This will be the function that checks if the back side is solved
+        if self.cube[2].colors[0] == self.cube[3].colors[0] == self.cube[6].colors[0] == self.cube[7].colors[0]:
+            return True
+    
+        return False
+    
+    def top_side_solved(self):
+        # This will be the function that checks if the top side is solved
+        if self.cube[0].colors[1] == self.cube[1].colors[1] == self.cube[2].colors[1] == self.cube[3].colors[1]:
+            return True
+    
+        return False
+    
+    def bottom_side_solved(self):
+        # This will be the function that checks if the bottom side is solved
+        if self.cube[4].colors[1] == self.cube[5].colors[1] == self.cube[6].colors[1] == self.cube[7].colors[1]:
+            return True
+    
+        return False
+    
+    def right_side_solved(self):
+        # This will be the function that checks if the right side is solved
+        if self.cube[0].colors[2] == self.cube[3].colors[2] == self.cube[4].colors[2] == self.cube[7].colors[2]:
+            return True
+    
+        return False
+    
+    def left_side_solved(self):
+        # This will be the function that checks if the left side is solved
+        if self.cube[1].colors[2] == self.cube[2].colors[2] == self.cube[5].colors[2] == self.cube[6].colors[2]:
+            return True
+    
+        return False
+
+    """    
+    def print_front_side(self):
+        # This will be the function that prints the front side
+        print(self.cube[0].colors[0] + " " + self.cube[1].colors[0])
+        print(self.cube[4].colors[0] + " " + self.cube[5].colors[0])
+    """
     def get_corner(self, corner):
         return self.cube[corner]
 
