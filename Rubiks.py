@@ -1,6 +1,7 @@
 from Corner import Corner
 
-CORNERS = ["Front-Right-Top", "Front-Left-Top", "Back-Left-Top", "Back-Right-Top", "Front-Right-Bottom", "Front-Left-Bottom", "Back-Left-Bottom", "Back-Right-Bottom"]
+CORNERS = ["Front-Right-Top", "Front-Left-Top", "Back-Left-Top", "Back-Right-Top", "Front-Right-Bottom", "Front-Left-Bottom", 
+           "Back-Left-Bottom", "Back-Right-Bottom"]
 COLORS = ["W", "G", "R", "B", "O", "Y"]
 FINAL_CUBE = {
     Corner(['R', 'W', 'B']), #Front-Right-Top
@@ -12,6 +13,8 @@ FINAL_CUBE = {
     Corner(['O', 'Y', 'G']), #Back-Left-Bottom
     Corner(['O', 'Y', 'B']) #Back-Right-Bottom
 }
+MOVES = ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left",
+         "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
 
 class Cube:
     def __init__(self):
@@ -335,5 +338,77 @@ class Cube:
         corner.colors[2] = temp
 
         return corner
+
+    def solve_cube(self, depth = 0):
+        if self.is_solved():
+            return True
+        
+        if depth >= self.max_depth:
+            return False
+
+        for move in MOVES:
+            self.apply_move(move)
+            if self.solve_cube(depth + 1):
+                return True
+            self.undo_move(move)
+
+        return False
     
+    def apply_move(self, move):
+        match move:
+            case "right_vertical_up":
+                self.right_vertical_up()
+            case "right_vertical_down":
+                self.right_vertical_down()
+            case "left_vertical_up":
+                self.left_vertical_up()
+            case "left_vertical_down":
+                self.left_vertical_down()
+            case "top_horizontal_right":
+                self.top_horizontal_right()
+            case "top_horizontal_left":
+                self.top_horizontal_left()
+            case "bottom_horizontal_right":
+                self.bottom_horizontal_right()
+            case "bottom_horizontal_left":
+                self.bottom_horizontal_left()
+            case "front_clockwise":
+                self.front_clockwise()
+            case "front_counter_clockwise":
+                self.front_counter_clockwise()
+            case "back_clockwise":
+                self.back_clockwise()
+            case "back_counter_clockwise":
+                self.back_counter_clockwise()
+            case _:
+                print("Invalid move")
+
+    def undo_move(self, move):
+        match move:
+            case "right_vertical_up":
+                self.right_vertical_down()
+            case "right_vertical_down":
+                self.right_vertical_up()
+            case "left_vertical_up":
+                self.left_vertical_down()
+            case "left_vertical_down":
+                self.left_vertical_up()
+            case "top_horizontal_right":
+                self.top_horizontal_left()
+            case "top_horizontal_left":
+                self.top_horizontal_right()
+            case "bottom_horizontal_right":
+                self.bottom_horizontal_left()
+            case "bottom_horizontal_left":
+                self.bottom_horizontal_right()
+            case "front_clockwise":
+                self.front_counter_clockwise()
+            case "front_counter_clockwise":
+                self.front_clockwise()
+            case "back_clockwise":
+                self.back_counter_clockwise()
+            case "back_counter_clockwise":
+                self.back_clockwise()
+            case _:
+                print("Invalid move")
 
