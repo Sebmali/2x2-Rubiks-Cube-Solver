@@ -16,7 +16,9 @@ FINAL_CUBE = {
 class Cube:
     def __init__(self):
         self.cube = self.set_initial_state()
-        self.max_depth = 15
+        self.max_depth_limit = 10
+        self.max_depth = 0
+        self.move_set = []
 
     def is_solved(self):
         #Create 6 functions that check if each side is solved
@@ -335,5 +337,66 @@ class Cube:
         corner.colors[2] = temp
 
         return corner
+<<<<<<< Updated upstream
+=======
+
+    def solve_cube_outer(self):
+        for depth_limit in range(1, self.max_depth_limit + 1):
+            self.max_depth = depth_limit
+            self.move_set = []
+            if self.solve_cube(0):
+                return True
+        return False
+
+    def solve_cube(self, depth = 0, last_move = None):
+        if self.is_solved():
+            return True
+        
+        if depth >= self.max_depth:
+            return False
+
+        for move in self.possible_moves(last_move):
+            self.apply_move(move)
+            print("Depth: ", depth)
+            if self.solve_cube(depth + 1, move):
+                self.move_set.append(move)
+                return True
+            self.undo_move(move)
+        
+        return False
+
+    def possible_moves(self, last_move=None):
+        if last_move:
+            return self.prune_moves(last_move)
+        return MOVES
+
+    def prune_moves(self, last_move):
+        if last_move == "right_vertical_up":
+            return ["right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "right_vertical_down":
+            return ["right_vertical_up", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "left_vertical_up":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "left_vertical_down":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "top_horizontal_right":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "top_horizontal_left":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "bottom_horizontal_right":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "bottom_horizontal_left":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "front_clockwise":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "front_counter_clockwise":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "back_clockwise", "back_counter_clockwise"]
+        elif last_move == "back_clockwise":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_counter_clockwise"]
+        elif last_move == "back_counter_clockwise":
+            return ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left", "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise"]
+        else:
+            return []
+>>>>>>> Stashed changes
     
 

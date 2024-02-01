@@ -3,13 +3,15 @@ from Rubiks import Cube
 
 cube = Cube()
 cube.print_cube()
-
-print("\n ****************************************** \n")
-
-cube.right_vertical_up()
+cube.solve_cube_outer()
 cube.print_cube()
+print(cube.move_set)
 
-print("\n ****************************************** \n")
-
-cube.print_cube()
-
+#b r w
+#o y g
+#y r b
+#b o w
+#w g r
+#w g o
+#y r g
+#o y b
