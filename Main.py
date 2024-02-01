@@ -11,4 +11,3 @@ cube.print_cube()
 
 print("\n ****************************************** \n")
 
-cube.print_front_side()
