@@ -2,7 +2,13 @@ from Corner import Corner
 from Rubiks import Cube
 
 cube = Cube()
-if(cube.is_solved()):
-    print("The cube is solved.")
-else:
-    cube.print_cube()
+cube.print_cube()
+
+print("\n ****************************************** \n")
+
+cube.right_vertical_up()
+cube.print_cube()
+
+print("\n ****************************************** \n")
+
+cube.print_front_side()
