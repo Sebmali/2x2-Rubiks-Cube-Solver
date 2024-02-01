@@ -82,21 +82,41 @@ class Cube:
         self.cube[corner] = Corner(colors)
     
     def set_initial_state(self):
-        print("Enter the colors of each corner on the cube.")
-        print("Use W for White, G for Green, R for Red, B for Blue, O for Orange, and Y for Yellow.")
-        print("Ensure to keep mind of the front of the cube at all points.")
-        print("Enter the colors in the format: Color1 Color2 Color3")
-    
+        print("Would you like to input a file ? (Y/N)")
         corners = []
-        for corner in CORNERS:
-            while True:
-                corner_colors = input("Enter the colors of the " + corner + " corner: ").strip().upper().split()
-                corner_combo = Corner(corner_colors)
-                if corner_combo.is_valid_corner():
-                    corners.append(Corner(corner_colors))
-                    break
-                else:
-                    print("Invalid corner colors. Please try again.")
+
+        choice = input().strip().upper()
+
+        if choice == "Y":
+            print("Enter the file name: ")
+            file_name = input().strip()
+            with open(file_name, "r") as file:
+                for line in file:
+                    corner_colors = line.strip().upper().split()
+                    corner_combo = Corner(corner_colors)
+                    if corner_combo.is_valid_corner():
+                        corners.append(Corner(corner_colors))
+                    else:
+                        print("Invalid corner colors. Please try again.")
+                        break
+            return corners
+        else:
+        
+            print("Enter the colors of each corner on the cube.")
+            print("Use W for White, G for Green, R for Red, B for Blue, O for Orange, and Y for Yellow.")
+            print("Ensure to keep mind of the front of the cube at all points.")
+            print("Enter the colors in the format: Color1 Color2 Color3")
+    
+
+            for corner in CORNERS:
+                while True:
+                    corner_colors = input("Enter the colors of the " + corner + " corner: ").strip().upper().split()
+                    corner_combo = Corner(corner_colors)
+                    if corner_combo.is_valid_corner():
+                        corners.append(Corner(corner_colors))
+                        break
+                    else:
+                        print("Invalid corner colors. Please try again.")
 
         return corners
 
