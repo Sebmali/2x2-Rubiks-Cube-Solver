@@ -2,23 +2,21 @@ from Corner import Corner
 
 CORNERS = ["Front-Right-Top", "Front-Left-Top", "Back-Left-Top", "Back-Right-Top", "Front-Right-Bottom", "Front-Left-Bottom", "Back-Left-Bottom", "Back-Right-Bottom"]
 COLORS = ["W", "G", "R", "B", "O", "Y"]
-FINAL_CUBE = [
-    Corner(['W', 'O', 'G']), #Front-Right-Top
-    Corner(('W', 'B', 'O')), #Front-Left-Top
-    Corner(('W', 'R', 'B')), #Back-Left-Top
-    Corner(('W', 'G', 'R')), #Back-Right-Top
-    Corner(('Y', 'G', 'R')), #Front-Right-Bottom
-    Corner(('Y', 'O', 'G')), #Front-Left-Bottom
-    Corner(('Y', 'B', 'O')), #Back-Left-Bottom
-    Corner(('Y', 'R', 'B')) #Back-Right-Bottom
-]
-VALID_COMBINATIONS = [
-    #This will be where the valid combinations go if this is the route we take.
-]
+FINAL_CUBE = {
+    Corner(['R', 'W', 'B']), #Front-Right-Top
+    Corner(['R', 'W', 'G']), #Front-Left-Top
+    Corner(['O', 'W', 'G']), #Back-Left-Top
+    Corner(['O', 'W', 'B']), #Back-Right-Top    
+    Corner(['R', 'Y', 'B']), #Front-Right-Bottom
+    Corner(['R', 'Y', 'G']), #Front-Left-Bottom
+    Corner(['O', 'Y', 'G']), #Back-Left-Bottom
+    Corner(['O', 'Y', 'B']) #Back-Right-Bottom
+}
 
 class Cube:
     def __init__(self):
         self.cube = self.set_initial_state()
+        self.max_depth = 15
 
     def is_solved(self):
         #Create 6 functions that check if each side is solved
@@ -90,27 +88,14 @@ class Cube:
         for corner in CORNERS:
             while True:
                 corner_colors = input("Enter the colors of the " + corner + " corner: ").strip().upper().split()
-                if self.is_valid_corner(corner_colors):
+                corner_combo = Corner(corner_colors)
+                if corner_combo.is_valid_corner():
                     corners.append(Corner(corner_colors))
                     break
                 else:
                     print("Invalid corner colors. Please try again.")
 
         return corners
-
-    def is_valid_corner(self, corner_colors):
-        if len(corner_colors) != 3:
-            return False
-
-        if not all(color in COLORS for color in corner_colors):
-            return False
-
-        return self.is_valid_combination(corner_colors)
-
-    def is_valid_combination(self, corner_colors):
-        # Will need to implement something to check if the combination is valid based on orientation and color comibanations
-        return True
-
 
     def print_cube(self):
         for corner in self.cube:
