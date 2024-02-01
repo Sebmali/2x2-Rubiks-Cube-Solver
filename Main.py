@@ -3,12 +3,5 @@ from Rubiks import Cube
 
 cube = Cube()
 cube.print_cube()
-
-print("\n ****************************************** \n")
-
-cube.right_vertical_up()
+cube.solve_cube()
 cube.print_cube()
-
-print("\n ****************************************** \n")
-
-cube.print_front_side()
