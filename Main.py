@@ -11,3 +11,5 @@ cube.print_cube()
 
 print("\n ****************************************** \n")
 
+cube.print_cube()
+
