@@ -1,7 +1,4 @@
 COLORS = ["W", "G", "R", "B", "O", "Y"]
-VALID_COMBINATIONS = [
-    #This will be where the valid combinations go if this is the route we take.
-]
 
 class Corner:
     def __init__(self, colors):

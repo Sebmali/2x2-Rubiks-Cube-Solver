@@ -1,25 +1,12 @@
 from Corner import Corner
-
-CORNERS = ["Front-Right-Top", "Front-Left-Top", "Back-Left-Top", "Back-Right-Top", "Front-Right-Bottom", "Front-Left-Bottom", 
-           "Back-Left-Bottom", "Back-Right-Bottom"]
-COLORS = ["W", "G", "R", "B", "O", "Y"]
-FINAL_CUBE = {
-    Corner(['R', 'W', 'B']), #Front-Right-Top
-    Corner(['R', 'W', 'G']), #Front-Left-Top
-    Corner(['O', 'W', 'G']), #Back-Left-Top
-    Corner(['O', 'W', 'B']), #Back-Right-Top    
-    Corner(['R', 'Y', 'B']), #Front-Right-Bottom
-    Corner(['R', 'Y', 'G']), #Front-Left-Bottom
-    Corner(['O', 'Y', 'G']), #Back-Left-Bottom
-    Corner(['O', 'Y', 'B']) #Back-Right-Bottom
-}
-MOVES = ["right_vertical_up", "right_vertical_down", "left_vertical_up", "left_vertical_down", "top_horizontal_right", "top_horizontal_left",
-         "bottom_horizontal_right", "bottom_horizontal_left", "front_clockwise", "front_counter_clockwise", "back_clockwise", "back_counter_clockwise"]
+import Constants
 
 class Cube:
     def __init__(self):
         self.cube = self.set_initial_state()
-        self.max_depth = 15
+        self.max_depth_limit = 10
+        self.max_depth = 0
+        self.move_set = []
 
     def is_solved(self):
         #Create 6 functions that check if each side is solved
@@ -31,50 +18,36 @@ class Cube:
         # This will be the function that checks if the front side is solved
         if self.cube[0].colors[0] == self.cube[1].colors[0] == self.cube[4].colors[0] == self.cube[5].colors[0]:
             return True
-    
         return False
     
     def back_side_solved(self):
         # This will be the function that checks if the back side is solved
         if self.cube[2].colors[0] == self.cube[3].colors[0] == self.cube[6].colors[0] == self.cube[7].colors[0]:
             return True
-    
         return False
     
     def top_side_solved(self):
         # This will be the function that checks if the top side is solved
         if self.cube[0].colors[1] == self.cube[1].colors[1] == self.cube[2].colors[1] == self.cube[3].colors[1]:
             return True
-    
         return False
     
     def bottom_side_solved(self):
         # This will be the function that checks if the bottom side is solved
         if self.cube[4].colors[1] == self.cube[5].colors[1] == self.cube[6].colors[1] == self.cube[7].colors[1]:
             return True
-    
         return False
     
     def right_side_solved(self):
-        # This will be the function that checks if the right side is solved
         if self.cube[0].colors[2] == self.cube[3].colors[2] == self.cube[4].colors[2] == self.cube[7].colors[2]:
-            return True
-    
+            return True  
         return False
     
     def left_side_solved(self):
-        # This will be the function that checks if the left side is solved
         if self.cube[1].colors[2] == self.cube[2].colors[2] == self.cube[5].colors[2] == self.cube[6].colors[2]:
             return True
-    
         return False
 
-    """    
-    def print_front_side(self):
-        # This will be the function that prints the front side
-        print(self.cube[0].colors[0] + " " + self.cube[1].colors[0])
-        print(self.cube[4].colors[0] + " " + self.cube[5].colors[0])
-    """
     def get_corner(self, corner):
         return self.cube[corner]
 
@@ -124,13 +97,6 @@ class Cube:
         for corner in self.cube:
             print(corner.colors)
 
-#These are the 12 possible steps that are available at each step of the search. 
-
-   #CORNERS = ["Front-Right-Top", "Front-Left-Top", "Back-Left-Top", "Back-Right-Top", "Front-Right-Bottom", "Front-Left-Bottom", "Back-Left-Bottom", "Back-Right-Bottom"]
-
-#These are the 12 possible steps that are available at each step of the search. 
-
-
     def right_vertical_up(self):
         # This will be the function that rotates the right vertical up
         # FBR -> FTR, FTR -> BTR, BBR -> FBR and BTR -> BBR with each corners first two elements swaping, so [R, G, B] -> [G, R, B]
@@ -147,11 +113,7 @@ class Cube:
         self.cube[3] = self.swap_first_two(temp_FTR) # swap
         self.cube[4] = self.swap_first_two(temp_BBR) # swap
         self.cube[7] = self.swap_first_two(temp_BTR) # swap
-
-        #do we need to return the new cube? or is it pass by ref
-
-        return True
-    
+  
     def right_vertical_down(self):
         # This will be the function that rotates the right vertical down
         
@@ -164,9 +126,7 @@ class Cube:
         self.cube[3] = self.swap_first_two(temp_BBR) 
         self.cube[4] = self.swap_first_two(temp_FTR)
         self.cube[7] = self.swap_first_two(temp_FBR)
-
-        return True
-    
+ 
     def left_vertical_up(self):
         # This will be the function that rotates the left vertical up
         
@@ -179,8 +139,6 @@ class Cube:
         self.cube[2] = self.swap_first_two(temp_FTL)
         self.cube[5] = self.swap_first_two(temp_BBL)
         self.cube[6] = self.swap_first_two(temp_BTL)
-        
-        return True
 
     def left_vertical_down(self):
         # This will be the function that rotates the left vertical down
@@ -194,8 +152,6 @@ class Cube:
         self.cube[2] = self.swap_first_two(temp_BBL)
         self.cube[5] = self.swap_first_two(temp_FTL)
         self.cube[6] = self.swap_first_two(temp_FBL)
-        
-        return True
 
     def top_horizontal_right(self):
         # This will be the function that rotates the top horizontal right
@@ -209,9 +165,7 @@ class Cube:
         self.cube[1] = self.swap_first_last(temp_BTL)
         self.cube[2] = self.swap_first_last(temp_BTR)
         self.cube[3] = self.swap_first_last(temp_FTR)
-        
-        return True
-
+    
     def top_horizontal_left(self):
         # This will be the function that rotates the top horizontal left
         
@@ -224,8 +178,6 @@ class Cube:
         self.cube[1] = self.swap_first_last(temp_FTR)
         self.cube[2] = self.swap_first_last(temp_FTL)
         self.cube[3] = self.swap_first_last(temp_BTL)
-        
-        return True
 
     def bottom_horizontal_right(self):
         # This will be the function that rotates the bottom horizontal right
@@ -239,8 +191,6 @@ class Cube:
         self.cube[5] = self.swap_first_last(temp_BBL)
         self.cube[6] = self.swap_first_last(temp_BBR)
         self.cube[7] = self.swap_first_last(temp_FBR)
-        
-        return True
 
     def bottom_horizontal_left(self):
         # This will be the function that rotates the bottom horizontal left
@@ -255,8 +205,6 @@ class Cube:
         self.cube[5] = self.swap_first_last(temp_FBR)
         self.cube[6] = self.swap_first_last(temp_FBL)
         self.cube[7] = self.swap_first_last(temp_BBL)
-        
-        return True
 
     def front_clockwise(self):
         # This will be the function that rotates the front clockwise
@@ -270,8 +218,6 @@ class Cube:
         self.cube[1] = self.swap_last_two(temp_FBL)
         self.cube[4] = self.swap_last_two(temp_FTR)
         self.cube[5] = self.swap_last_two(temp_FBR)
-        
-        return True    
 
     def front_counter_clockwise(self):
         # This will be the function that rotates the front counter clockwise
@@ -285,8 +231,6 @@ class Cube:
         self.cube[1] = self.swap_last_two(temp_FTR)
         self.cube[4] = self.swap_last_two(temp_FBL)
         self.cube[5] = self.swap_last_two(temp_FTL)
-        
-        return True
 
     def back_clockwise(self):
         # This will be the function that rotates the back clockwise
@@ -300,8 +244,6 @@ class Cube:
         self.cube[3] = self.swap_last_two(temp_BTL)
         self.cube[6] = self.swap_last_two(temp_BBR)
         self.cube[7] = self.swap_last_two(temp_BTR)
-        
-        return True
 
     def back_counter_clockwise(self):
         # This will be the function that rotates the back counter clockwise
@@ -315,8 +257,7 @@ class Cube:
         self.cube[3] = self.swap_last_two(temp_BBR)
         self.cube[6] = self.swap_last_two(temp_BTL)
         self.cube[7] = self.swap_last_two(temp_BBL)
-        
-        return True
+
 
     def swap_first_two(self, corner):
         temp = corner.colors[0]
@@ -339,76 +280,82 @@ class Cube:
 
         return corner
 
-    def solve_cube(self, depth = 0):
+    def solve_cube_outer(self):
+        for depth_limit in range(1, self.max_depth_limit + 1):
+            self.max_depth = depth_limit
+            self.move_set = []
+            if self.solve_cube(0):
+                return True
+        return False
+
+    def solve_cube(self, depth = 0, last_move = None):
         if self.is_solved():
             return True
         
         if depth >= self.max_depth:
             return False
 
-        for move in MOVES:
+        for move in self.possible_moves(last_move):
             self.apply_move(move)
-            if self.solve_cube(depth + 1):
+            print("Depth: ", depth)
+            if self.solve_cube(depth + 1, move):
+                self.move_set.append(move)
                 return True
             self.undo_move(move)
-
+        
         return False
-    
+
     def apply_move(self, move):
         match move:
-            case "right_vertical_up":
-                self.right_vertical_up()
-            case "right_vertical_down":
-                self.right_vertical_down()
-            case "left_vertical_up":
-                self.left_vertical_up()
-            case "left_vertical_down":
-                self.left_vertical_down()
-            case "top_horizontal_right":
-                self.top_horizontal_right()
-            case "top_horizontal_left":
-                self.top_horizontal_left()
-            case "bottom_horizontal_right":
-                self.bottom_horizontal_right()
-            case "bottom_horizontal_left":
-                self.bottom_horizontal_left()
-            case "front_clockwise":
-                self.front_clockwise()
-            case "front_counter_clockwise":
-                self.front_counter_clockwise()
-            case "back_clockwise":
-                self.back_clockwise()
-            case "back_counter_clockwise":
-                self.back_counter_clockwise()
-            case _:
-                print("Invalid move")
+            case Constants.RVU: self.right_vertical_up()
+            case Constants.RVD: self.right_vertical_down()
+            case Constants.LVU: self.left_vertical_up()
+            case Constants.LVD: self.left_vertical_down()
+            case Constants.THR: self.top_horizontal_right()
+            case Constants.THL: self.top_horizontal_left()
+            case Constants.BHR: self.bottom_horizontal_right()
+            case Constants.BHL: self.bottom_horizontal_left()
+            case Constants.FC: self.front_clockwise()
+            case Constants.FCC: self.front_counter_clockwise()
+            case Constants.BC: self.back_clockwise()
+            case Constants.BCC: self.back_counter_clockwise()
+            case _: print("Invalid move")
 
     def undo_move(self, move):
         match move:
-            case "right_vertical_up":
-                self.right_vertical_down()
-            case "right_vertical_down":
-                self.right_vertical_up()
-            case "left_vertical_up":
-                self.left_vertical_down()
-            case "left_vertical_down":
-                self.left_vertical_up()
-            case "top_horizontal_right":
-                self.top_horizontal_left()
-            case "top_horizontal_left":
-                self.top_horizontal_right()
-            case "bottom_horizontal_right":
-                self.bottom_horizontal_left()
-            case "bottom_horizontal_left":
-                self.bottom_horizontal_right()
-            case "front_clockwise":
-                self.front_counter_clockwise()
-            case "front_counter_clockwise":
-                self.front_clockwise()
-            case "back_clockwise":
-                self.back_counter_clockwise()
-            case "back_counter_clockwise":
-                self.back_clockwise()
-            case _:
-                print("Invalid move")
+            case Constants.RVU: self.right_vertical_down()
+            case Constants.RVD: self.right_vertical_up()
+            case Constants.LVU: self.left_vertical_down()
+            case Constants.LVD: self.left_vertical_up()
+            case Constants.THR: self.top_horizontal_left()
+            case Constants.THL: self.top_horizontal_right()
+            case Constants.BHR: self.bottom_horizontal_left()
+            case Constants.BHL: self.bottom_horizontal_right()
+            case Constants.FC: self.front_counter_clockwise()
+            case Constants.FCC: self.front_clockwise()
+            case Constants.BC: self.back_counter_clockwise()
+            case Constants.BCC: self.back_clockwise()
+            case _: print("Invalid move")
+
+    def possible_moves(self, last_move=None):
+        if last_move:
+            return self.prune_moves(last_move)
+        return Constants.MOVES
+
+    def prune_moves(self, last_move):
+        match last_move:
+            case Constants.RVU: return Constants.RVU_MOVES
+            case Constants.RVD: return Constants.RVD_MOVES
+            case Constants.LVU: return Constants.LVU_MOVES
+            case Constants.LVD: return Constants.LVD_MOVES
+            case Constants.THR: return Constants.THR_MOVES
+            case Constants.THL: return Constants.THL_MOVES
+            case Constants.BHR: return Constants.BHR_MOVES
+            case Constants.BHL: return Constants.BHL_MOVES
+            case Constants.FC: return Constants.FC_MOVES
+            case Constants.FCC: return Constants.FCC_MOVES
+            case Constants.BC: return Constants.BC_MOVES
+            case Constants.BCC: return Constants.BCC_MOVES
+            case _: return []
+    
 
