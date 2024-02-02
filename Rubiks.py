@@ -258,6 +258,7 @@ class Cube:
         self.cube[6] = self.swap_last_two(temp_BTL)
         self.cube[7] = self.swap_last_two(temp_BBL)
 
+
     def swap_first_two(self, corner):
         temp = corner.colors[0]
         corner.colors[0] = corner.colors[1]
