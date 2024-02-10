@@ -1,0 +1,8 @@
+W B R
+W B O
+Y B O
+Y B R
+W G R
+W G O
+Y G O
+Y G R
