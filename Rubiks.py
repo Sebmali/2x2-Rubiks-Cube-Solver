@@ -1,10 +1,14 @@
 from Corner import Corner
 import Constants
-from Constants import SOLVED_CUBE
+from Constants import *
 
 class Cube:
-    def __init__(self):
-        self.cube = self.set_initial_state()
+    def __init__(self, final = False):
+        if final:
+            self.cube = self.set_final_state()
+        else:
+            self.cube = self.set_initial_state()
+        self.final_cube = self.set_final_state() #test
         self.max_depth_limit = 15
         self.max_depth = 0
         self.move_set = []
@@ -12,41 +16,6 @@ class Cube:
         self.memo = {}
         self.common_keys = None
 
-    def is_solved(self):
-        if self.front_side_solved() and self.back_side_solved() and self.top_side_solved() and self.bottom_side_solved() and self.right_side_solved() and self.left_side_solved():
-            return True
-        return False
-
-    def front_side_solved(self):
-        if self.cube[0].colors[0] == self.cube[1].colors[0] == self.cube[4].colors[0] == self.cube[5].colors[0]:
-            return True
-        return False
-    
-    def back_side_solved(self):
-        if self.cube[2].colors[0] == self.cube[3].colors[0] == self.cube[6].colors[0] == self.cube[7].colors[0]:
-            return True
-        return False
-    
-    def top_side_solved(self):
-        if self.cube[0].colors[1] == self.cube[1].colors[1] == self.cube[2].colors[1] == self.cube[3].colors[1]:
-            return True
-        return False
-    
-    def bottom_side_solved(self):
-        if self.cube[4].colors[1] == self.cube[5].colors[1] == self.cube[6].colors[1] == self.cube[7].colors[1]:
-            return True
-        return False
-    
-    def right_side_solved(self):
-        if self.cube[0].colors[2] == self.cube[3].colors[2] == self.cube[4].colors[2] == self.cube[7].colors[2]:
-            return True  
-        return False
-    
-    def left_side_solved(self):
-        if self.cube[1].colors[2] == self.cube[2].colors[2] == self.cube[5].colors[2] == self.cube[6].colors[2]:
-            return True
-        return False
-   
     def set_initial_state(self):
         print("Would you like to input a file ? (Y/N)")
         corners = []
@@ -81,181 +50,48 @@ class Cube:
 
         return corners
 
+    def set_final_state(self): #test
+        final_cube = []
+        for corner in Constants.SOLVED_CUBE:
+            c1 = corner[0]
+            c2 = corner[1]
+            c3 = corner[2]
+            new_corner = Corner([c1, c2, c3])
+            if new_corner.is_valid_corner():
+                final_cube.append(new_corner)
+        return final_cube  
+
+    def is_solved(self):
+        if (self.side_solved(FRONT, 0) and self.side_solved(BACK, 0) and 
+            self.side_solved(TOP, 1) and self.side_solved(BOTTOM, 1) and 
+            self.side_solved(RIGHT, 2) and self.side_solved(LEFT, 2)):
+            return True
+        return False
+
+    def side_solved(self, indices, color_index):
+        return len(set(self.cube[i].colors[color_index] for i in indices)) == 1
+ 
     def print_cube(self):
         for corner in self.cube:
             print(corner.colors)
 
-    def right_vertical_up(self):
-        self.swap_first_two(self.cube[0])
-        self.swap_first_two(self.cube[3])
-        self.swap_first_two(self.cube[4])
-        self.swap_first_two(self.cube[7])
+    def print_final_cube(self):
+        for corner in self.final_cube:
+            print(corner.colors)
 
-        temp_cube0 = self.cube[0]
+    def move(self, move_corners, move1, move2): #placeholder for above functions
+        for index in move_corners:
+            self.swap_colors(self.cube[index], move1, move2)
+        temp_cube0 = self.cube[move_corners[0]]
+        self.cube[move_corners[0]] = self.cube[move_corners[1]]
+        self.cube[move_corners[1]] = self.cube[move_corners[2]]
+        self.cube[move_corners[2]] = self.cube[move_corners[3]]
+        self.cube[move_corners[3]] = temp_cube0    
 
-        self.cube[0] = self.cube[4]
-        self.cube[4] = self.cube[7]
-        self.cube[7] = self.cube[3]
-        self.cube[3] = temp_cube0
-
-    def right_vertical_down(self):
-        self.swap_first_two(self.cube[0])
-        self.swap_first_two(self.cube[3])
-        self.swap_first_two(self.cube[4])
-        self.swap_first_two(self.cube[7])
-
-        temp_cube0 = self.cube[0]
-
-        self.cube[0] = self.cube[3]
-        self.cube[3] = self.cube[7]
-        self.cube[7] = self.cube[4]
-        self.cube[4] = temp_cube0
-
-    def left_vertical_up(self):
-        self.swap_first_two(self.cube[1])
-        self.swap_first_two(self.cube[2])
-        self.swap_first_two(self.cube[5])
-        self.swap_first_two(self.cube[6])
-
-        temp_cube0 = self.cube[1]
-
-        self.cube[1] = self.cube[5]
-        self.cube[5] = self.cube[6]
-        self.cube[6] = self.cube[2]
-        self.cube[2] = temp_cube0
-
-    def left_vertical_down(self):
-        self.swap_first_two(self.cube[1])
-        self.swap_first_two(self.cube[2])
-        self.swap_first_two(self.cube[5])
-        self.swap_first_two(self.cube[6])
-
-        temp_cube0 = self.cube[1]
-
-        self.cube[1] = self.cube[2]
-        self.cube[2] = self.cube[6]
-        self.cube[6] = self.cube[5]
-        self.cube[5] = temp_cube0
-
-    def top_horizontal_right(self):
-        self.swap_first_last(self.cube[0])
-        self.swap_first_last(self.cube[1])
-        self.swap_first_last(self.cube[2])
-        self.swap_first_last(self.cube[3])
-
-        temp_cube0 = self.cube[0]
-
-        self.cube[0] = self.cube[1]
-        self.cube[1] = self.cube[2]
-        self.cube[2] = self.cube[3]
-        self.cube[3] = temp_cube0
-    
-    def top_horizontal_left(self):
-        self.swap_first_last(self.cube[0])
-        self.swap_first_last(self.cube[1])
-        self.swap_first_last(self.cube[2])
-        self.swap_first_last(self.cube[3])
-
-        temp_cube0 = self.cube[0]
-
-        self.cube[0] = self.cube[3]
-        self.cube[3] = self.cube[2]
-        self.cube[2] = self.cube[1]
-        self.cube[1] = temp_cube0
-
-    def bottom_horizontal_right(self):
-        self.swap_first_last(self.cube[4])
-        self.swap_first_last(self.cube[5])
-        self.swap_first_last(self.cube[6])
-        self.swap_first_last(self.cube[7])
-
-        temp_cube0 = self.cube[4]
-
-        self.cube[4] = self.cube[5]
-        self.cube[5] = self.cube[6]
-        self.cube[6] = self.cube[7]
-        self.cube[7] = temp_cube0
-
-    def bottom_horizontal_left(self):
-        self.swap_first_last(self.cube[4])
-        self.swap_first_last(self.cube[5])
-        self.swap_first_last(self.cube[6])
-        self.swap_first_last(self.cube[7])
-
-        temp_cube0 = self.cube[4]
-
-        self.cube[4] = self.cube[7]
-        self.cube[7] = self.cube[6]
-        self.cube[6] = self.cube[5]
-        self.cube[5] = temp_cube0
-
-    def front_clockwise(self):
-        self.swap_last_two(self.cube[0])
-        self.swap_last_two(self.cube[1])
-        self.swap_last_two(self.cube[4])
-        self.swap_last_two(self.cube[5])
-
-        temp_cube0 = self.cube[0]
-
-        self.cube[0] = self.cube[1]
-        self.cube[1] = self.cube[5]
-        self.cube[5] = self.cube[4]
-        self.cube[4] = temp_cube0
-
-    def front_counter_clockwise(self):
-        self.swap_last_two(self.cube[0])
-        self.swap_last_two(self.cube[1])
-        self.swap_last_two(self.cube[4])
-        self.swap_last_two(self.cube[5])
-
-        temp_cube0 = self.cube[0]
-
-        self.cube[0] = self.cube[4]
-        self.cube[4] = self.cube[5]
-        self.cube[5] = self.cube[1]
-        self.cube[1] = temp_cube0
-
-    def back_clockwise(self):
-        self.swap_last_two(self.cube[2])
-        self.swap_last_two(self.cube[3])
-        self.swap_last_two(self.cube[6])
-        self.swap_last_two(self.cube[7])
-
-        temp_cube0 = self.cube[2]
-
-        self.cube[2] = self.cube[6]
-        self.cube[6] = self.cube[7]
-        self.cube[7] = self.cube[3]
-        self.cube[3] = temp_cube0
-
-
-    def back_counter_clockwise(self):
-        self.swap_last_two(self.cube[2])
-        self.swap_last_two(self.cube[3])
-        self.swap_last_two(self.cube[6])
-        self.swap_last_two(self.cube[7])
-
-        temp_cube0 = self.cube[2]
-
-        self.cube[2] = self.cube[3]
-        self.cube[3] = self.cube[7]
-        self.cube[7] = self.cube[6]
-        self.cube[6] = temp_cube0
-
-    def swap_first_two(self, corner):
-        temp = corner.colors[0]
-        corner.colors[0] = corner.colors[1]
-        corner.colors[1] = temp
-
-    def swap_last_two(self, corner):
-        temp = corner.colors[2]
-        corner.colors[2] = corner.colors[1]
-        corner.colors[1] = temp
-    
-    def swap_first_last(self, corner):
-        temp = corner.colors[0]
-        corner.colors[0] = corner.colors[2]
-        corner.colors[2] = temp
+    def swap_colors(self, corner, c1, c2):
+        temp = corner.colors[c1]
+        corner.colors[c1] = corner.colors[c2]
+        corner.colors[c2] = temp
 
     def solve_cube_outer(self):
         for depth_limit in range(1, self.max_depth_limit + 1):
@@ -350,38 +186,40 @@ class Cube:
     
     def apply_rem_moves(self, move_set):
         for move in move_set:
-            self.apply_move(move)
+            revised_move = self.convert_move(move)
+            self.apply_move(revised_move)
+            self.move_set.append(revised_move)
 
     def apply_move(self, move):
         match move:
-            case Constants.RVU: self.right_vertical_up()
-            case Constants.RVD: self.right_vertical_down()
-            case Constants.LVU: self.left_vertical_up()
-            case Constants.LVD: self.left_vertical_down()
-            case Constants.THR: self.top_horizontal_right()
-            case Constants.THL: self.top_horizontal_left()
-            case Constants.BHR: self.bottom_horizontal_right()
-            case Constants.BHL: self.bottom_horizontal_left()
-            case Constants.FC: self.front_clockwise()
-            case Constants.FCC: self.front_counter_clockwise()
-            case Constants.BC: self.back_clockwise()
-            case Constants.BCC: self.back_counter_clockwise()
+            case Constants.RVU: self.move(RVU_IND, C1, C2)
+            case Constants.RVD: self.move(RVD_IND, C1, C2)
+            case Constants.LVU: self.move(LVU_IND, C1, C2)
+            case Constants.LVD: self.move(LVD_IND, C1, C2)
+            case Constants.THR: self.move(THR_IND, C1, C3)
+            case Constants.THL: self.move(THL_IND, C1, C3)
+            case Constants.BHR: self.move(BHR_IND, C1, C3)
+            case Constants.BHL: self.move(BHL_IND, C1, C3)
+            case Constants.FC: self.move(FC_IND, C2, C3)
+            case Constants.FCC: self.move(FCC_IND, C2, C3)
+            case Constants.BC: self.move(BC_IND, C2, C3)
+            case Constants.BCC: self.move(BCC_IND, C2, C3)
             case _: print("Invalid move")
 
     def undo_move(self, move):
         match move:
-            case Constants.RVU: self.right_vertical_down()
-            case Constants.RVD: self.right_vertical_up()
-            case Constants.LVU: self.left_vertical_down()
-            case Constants.LVD: self.left_vertical_up()
-            case Constants.THR: self.top_horizontal_left()
-            case Constants.THL: self.top_horizontal_right()
-            case Constants.BHR: self.bottom_horizontal_left()
-            case Constants.BHL: self.bottom_horizontal_right()
-            case Constants.FC: self.front_counter_clockwise()
-            case Constants.FCC: self.front_clockwise()
-            case Constants.BC: self.back_counter_clockwise()
-            case Constants.BCC: self.back_clockwise()
+            case Constants.RVU: self.move(RVD_IND, C1, C2)
+            case Constants.RVD: self.move(RVU_IND, C1, C2)
+            case Constants.LVU: self.move(LVD_IND, C1, C2)
+            case Constants.LVD: self.move(LVU_IND, C1, C2)
+            case Constants.THR: self.move(THL_IND, C1, C3)
+            case Constants.THL: self.move(THR_IND, C1, C3)
+            case Constants.BHR: self.move(BHL_IND, C1, C3)
+            case Constants.BHL: self.move(BHR_IND, C1, C3)
+            case Constants.FC: self.move(FCC_IND, C2, C3)
+            case Constants.FCC: self.move(FC_IND, C2, C3)
+            case Constants.BC: self.move(BCC_IND, C2, C3)
+            case Constants.BCC: self.move(BC_IND, C2, C3)
             case _: print("Invalid move")
 
     def possible_moves(self, last_move=None):
@@ -432,179 +270,3 @@ class Cube:
             case Constants.FCC: return Constants.FC
             case Constants.BC: return Constants.BCC
             case Constants.BCC: return Constants.BC
-    
-    def best_move(self, last_move=None):
-        best_moves = []
-        for move in self.possible_moves(last_move):
-            self.apply_move(move)
-            new_percent = self.percent_solved()
-            best_moves.append((move, new_percent))  
-            self.undo_move(move)
-        best_moves.sort(key=lambda x: x[1], reverse=True)
-        sorted_moves = [move[0] for move in best_moves]
-        return sorted_moves
-
-    def percent_solved(self):
-        self.percent_complete = (self.percent_of_front_solved() + self.percent_of_back_solved() + self.percent_of_top_solved() + self.percent_of_bottom_solved() + self.percent_of_right_solved() + self.percent_of_left_solved()) / 6
-        return (self.percent_complete)
-    
-    # Helper function to calculate the % of each side that is solved
-    def percent_of_front_solved(self):
-        front_count = 0
-        if self.cube[0].colors[0] == self.cube[1].colors[0]:
-            front_count += 1
-        if self.cube[0].colors[0] == self.cube[4].colors[0]:
-            front_count += 1
-        if self.cube[0].colors[0] == self.cube[5].colors[0]:
-            front_count += 1
-        if self.cube[1].colors[0] == self.cube[4].colors[0]:
-            front_count += 1
-        if self.cube[1].colors[0] == self.cube[5].colors[0]:
-            front_count += 1
-        if self.cube[4].colors[0] == self.cube[5].colors[0]:
-            front_count += 1
-        
-        if front_count == 1:
-            front_count += 1
-        elif front_count > 3:
-            front_count = 4
-        else:
-            #print("Front count: ", str(front_count), "Front %: ", str((front_count / 4) * 100))
-            return (front_count / 4) * 100
-        
-        #print("Front count: ", str(front_count), "Front %: ", str((front_count / 4) * 100))
-        return (front_count / 4) * 100
-    
-    def percent_of_back_solved(self):
-        # This will be the function that checks if the back side is solved
-        back_count = 0
-        if self.cube[2].colors[0] == self.cube[3].colors[0]:
-            back_count += 1
-        if self.cube[2].colors[0] == self.cube[6].colors[0]:
-            back_count += 1
-        if self.cube[2].colors[0] == self.cube[7].colors[0]:
-            back_count += 1
-        if self.cube[3].colors[0] == self.cube[6].colors[0]:
-            back_count += 1
-        if self.cube[3].colors[0] == self.cube[7].colors[0]:
-            back_count += 1
-        if self.cube[6].colors[0] == self.cube[7].colors[0]:
-            back_count += 1
-        
-        if back_count == 1:
-            back_count += 1
-        elif back_count > 3:
-            back_count = 4
-        else:
-            #print("Back count: ", str(back_count), "Back %: ", str((back_count / 4) * 100))
-            return (back_count / 4) * 100
-        
-        #print("Back count: ", str(back_count), "Back %: ", str((back_count / 4) * 100))
-        return (back_count / 4) * 100
-    
-    def percent_of_top_solved(self):
-        # This will be the function that checks if the top side is solved
-        top_count = 0
-        if self.cube[0].colors[1] == self.cube[1].colors[1]:
-            top_count += 1
-        if self.cube[0].colors[1] == self.cube[2].colors[1]:
-            top_count += 1
-        if self.cube[0].colors[1] == self.cube[3].colors[1]:
-            top_count += 1
-        if self.cube[1].colors[1] == self.cube[2].colors[1]:
-            top_count += 1
-        if self.cube[1].colors[1] == self.cube[3].colors[1]:
-            top_count += 1
-        if self.cube[2].colors[1] == self.cube[3].colors[1]:
-            top_count += 1
-        
-        if top_count == 1:
-            top_count += 1
-        elif top_count > 3:
-            top_count = 4
-        else:
-            #print("Top count: ", str(top_count), "Top %: ", str((top_count / 4) * 100))
-            return (top_count / 4) * 100
-        
-        #print("Top count: ", str(top_count), "Top %: ", str((top_count / 4) * 100))
-        return (top_count / 4) * 100
-    
-    def percent_of_bottom_solved(self):
-        # This will be the function that checks if the bottom side is solved
-        bottom_count = 0
-        if self.cube[4].colors[1] == self.cube[5].colors[1]:
-            bottom_count += 1
-        if self.cube[4].colors[1] == self.cube[6].colors[1]:
-            bottom_count += 1
-        if self.cube[4].colors[1] == self.cube[7].colors[1]:
-            bottom_count += 1
-        if self.cube[5].colors[1] == self.cube[6].colors[1]:
-            bottom_count += 1
-        if self.cube[5].colors[1] == self.cube[7].colors[1]:
-            bottom_count += 1
-        if self.cube[6].colors[1] == self.cube[7].colors[1]:
-            bottom_count += 1
-        
-        if bottom_count == 1:
-            bottom_count += 1
-        elif bottom_count > 3:
-            bottom_count = 4
-        else:
-            #print("Bottom count: ", str(bottom_count), "Bottom %: ", str((bottom_count / 4) * 100))
-            return (bottom_count / 4) * 100
-        
-        #print("Bottom count: ", str(bottom_count), "Bottom %: ", str((bottom_count / 4) * 100))
-        return (bottom_count / 4) * 100
-    
-    def percent_of_right_solved(self):
-        right_count = 0
-        if self.cube[0].colors[2] == self.cube[3].colors[2]:
-            right_count += 1
-        if self.cube[0].colors[2] == self.cube[4].colors[2]:
-            right_count += 1
-        if self.cube[0].colors[2] == self.cube[7].colors[2]:
-            right_count += 1
-        if self.cube[3].colors[2] == self.cube[4].colors[2]:
-            right_count += 1
-        if self.cube[3].colors[2] == self.cube[7].colors[2]:
-            right_count += 1
-        if self.cube[4].colors[2] == self.cube[7].colors[2]:
-            right_count += 1
-            
-        if right_count == 1:
-            right_count += 1
-        elif right_count > 3:
-            right_count = 4
-        else:
-            #print("Right count: ", str(right_count), "Right %: ", str((right_count / 4) * 100))
-            return (right_count / 4) * 100
-        
-        #print("Right count: ", str(right_count), "Right %: ", str((right_count / 4) * 100))
-        return (right_count / 4) * 100
-    
-    def percent_of_left_solved(self):
-        
-        left_count = 0
-        if self.cube[1].colors[2] == self.cube[2].colors[2]:
-            left_count += 1
-        if self.cube[1].colors[2] == self.cube[5].colors[2]:
-            left_count += 1
-        if self.cube[1].colors[2] == self.cube[6].colors[2]:
-            left_count += 1
-        if self.cube[2].colors[2] == self.cube[5].colors[2]:
-            left_count += 1
-        if self.cube[2].colors[2] == self.cube[6].colors[2]:
-            left_count += 1
-        if self.cube[5].colors[2] == self.cube[6].colors[2]:
-            left_count += 1
-        
-        if left_count == 1:
-            left_count += 1
-        elif left_count > 3:
-            left_count = 4
-        else:
-            #print("Left count: ", str(left_count), "Left %: ", str((left_count / 4) * 100))
-            return (left_count / 4) * 100
-        
-        #print("Left count: ", str(left_count), "Left %: ", str((left_count / 4) * 100))
-        return (left_count / 4) * 100
