@@ -1,8 +1,8 @@
-Y R B 
-O G W 
-R W B 
-Y O B 
-W B O 
-Y G R 
-W G R 
-G Y O 
+B R W
+O W B
+G R Y
+O G W
+Y O B
+R G W
+Y G O
+Y R B

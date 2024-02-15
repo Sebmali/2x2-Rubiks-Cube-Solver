@@ -13,25 +13,48 @@ FC = "front_clockwise"
 FCC = "front_counter_clockwise"
 BC = "back_clockwise"
 BCC = "back_counter_clockwise"
-MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
-RVU_MOVES = [RVU, LVU, LVD, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
-RVD_MOVES = [RVD, LVU, LVD, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
-LVU_MOVES = [RVU, RVD, LVU, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
-LVD_MOVES = [RVU, RVD, LVD, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
-THR_MOVES = [RVU, RVD, LVU, LVD, THR, BHR, BHL, FC, FCC, BC, BCC]
-THL_MOVES = [RVU, RVD, LVU, LVD, THL, BHR, BHL, FC, FCC, BC, BCC]
-BHR_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, FC, FCC, BC, BCC]
-BHL_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHL, FC, FCC, BC, BCC]
-FC_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FC, BC, BCC]
-FCC_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FCC, BC, BCC]
-BC_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FC, FCC, BC]
-BCC_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FC, FCC, BCC]
 
-SOLVED_CUBE = [["R", "W", "B"],
-               ["R", "W", "G"],
-               ["O", "W", "G"],
-               ["O", "W", "B"],
-               ["R", "Y", "B"],
-               ["R", "Y", "G"],
-               ["O", "Y", "G"],
-               ["O", "Y", "B"]]
+# All possible moves
+MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
+RVU_MOVES = [RVU, LVD, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
+RVD_MOVES = [RVD, LVU, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
+LVU_MOVES = [RVD, LVU, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
+LVD_MOVES = [RVU, LVD, THR, THL, BHR, BHL, FC, FCC, BC, BCC]
+THR_MOVES = [RVU, RVD, LVU, LVD, THR, BHL, FC, FCC, BC, BCC]
+THL_MOVES = [RVU, RVD, LVU, LVD, THL, BHR, FC, FCC, BC, BCC]
+BHR_MOVES = [RVU, RVD, LVU, LVD, THL, BHR, FC, FCC, BC, BCC]
+BHL_MOVES = [RVU, RVD, LVU, LVD, THR, BHL, FC, FCC, BC, BCC]
+FC_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FC, BCC]
+FCC_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FCC, BC]
+BC_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FCC, BC]
+BCC_MOVES = [RVU, RVD, LVU, LVD, THR, THL, BHR, BHL, FC, BCC]
+
+SOLVED_CUBE = [['R','W','B'],['R','W','G'],['O','W','G'],['O','W','B'],
+                ['R','Y','B'],['R','Y','G'],['O','Y','G'],['O','Y','B']]
+
+#Corner indices for each move
+RVU_IND = [0, 4, 7, 3]
+RVD_IND = [0, 3, 7, 4]
+LVU_IND = [1, 5, 6, 2]
+LVD_IND = [1, 2, 6, 5]
+THR_IND = [0, 1, 2, 3]
+THL_IND = [0, 3, 2, 1]
+BHR_IND = [4, 5, 6, 7]
+BHL_IND = [4, 7, 6, 5]
+FC_IND = [0, 1, 5, 4]
+FCC_IND = [0, 4, 5, 1]
+BC_IND = [2, 6, 7, 3]
+BCC_IND = [2, 3, 7, 6]
+
+#Color Indeces 1,2,3 in a corner
+C1 = 0
+C2 = 1
+C3 = 2
+
+#Face indices for solving check
+FRONT = [0, 1, 4, 5] 
+BACK = [2, 3, 6, 7]
+TOP = [0, 1, 2, 3]
+BOTTOM = [4, 5, 6, 7]
+RIGHT = [0, 3, 4, 7]
+LEFT = [1, 2, 5, 6]
