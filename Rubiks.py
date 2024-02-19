@@ -17,38 +17,51 @@ class Cube:
         self.common_keys = None
 
     def set_initial_state(self):
-        print("Would you like to input a file ? (Y/N)")
-        corners = []
-        choice = input().strip().upper()
-        if choice == "Y":
-            print("Enter the file name: ")
-            file_name = input().strip()
-            with open(file_name, "r") as file:
-                for line in file:
-                    corner_colors = line.strip().upper().split()
-                    corner_combo = Corner(corner_colors)
-                    if corner_combo.is_valid_corner():
-                        corners.append(Corner(corner_colors))
-                    else:
-                        print("Invalid corner colors. Please try again.")
-                        break
-            return corners
-        else:  
-            print("Enter the colors of each corner on the cube.")
-            print("Use W for White, G for Green, R for Red, B for Blue, O for Orange, and Y for Yellow.")
-            print("Ensure to keep mind of the front of the cube at all points.")
-            print("Enter the colors in the format: Color1 Color2 Color3")
-            for corner in CORNERS:
-                while True:
-                    corner_colors = input("Enter the colors of the " + corner + " corner: ").strip().upper().split()
-                    corner_combo = Corner(corner_colors)
-                    if corner_combo.is_valid_corner():
-                        corners.append(Corner(corner_colors))
-                        break
-                    else:
-                        print("Invalid corner colors. Please try again.")
-
+        inputted = False 
+        while not inputted:
+            print("Would you like to input a file ? (Y/N)")
+            corners = []
+            choice = input().strip().upper()
+            if choice == "Y":
+                print("Enter the file name: ")
+                file_name = input().strip()
+                with open(file_name, "r") as file:
+                    for line in file:
+                        corner_colors = line.strip().upper().split()
+                        corner_combo = Corner(corner_colors)
+                        if corner_combo.is_valid_corner():
+                            corners.append(Corner(corner_colors))
+                        else:
+                            print("Invalid corner colors. Please try again.")
+                            break
+            else:  
+                print("Enter the colors of each corner on the cube.")
+                print("Use W for White, G for Green, R for Red, B for Blue, O for Orange, and Y for Yellow.")
+                print("Ensure to keep mind of the front of the cube at all points.")
+                print("Enter the colors in the format: Color1 Color2 Color3")
+                for corner in CORNERS:
+                    while True:
+                        corner_colors = input("Enter the colors of the " + corner + " corner: ").strip().upper().split()
+                        corner_combo = Corner(corner_colors)
+                        if corner_combo.is_valid_corner():
+                            corners.append(Corner(corner_colors))
+                            break
+                        else:
+                            print("Invalid corner colors. Please try again.")
+            if(self.check_initial_cube(corners)):
+                inputted = True
         return corners
+
+    def check_initial_cube(self, cube):
+        colorCount = {color: 0 for color in COLORS}
+        for corner in cube:
+            if corner.colors not in INITIAL_POSSIBILITIES:
+                return False
+            for color in corner.colors:
+                colorCount[color] += 1
+                if colorCount[color] > 4:
+                    return False     
+        return True
 
     def set_final_state(self): #test
         final_cube = []
@@ -192,55 +205,55 @@ class Cube:
 
     def apply_move(self, move):
         match move:
-            case Constants.RVU: self.move(RVU_IND, C1, C2)
-            case Constants.RVD: self.move(RVD_IND, C1, C2)
-            case Constants.LVU: self.move(LVU_IND, C1, C2)
-            case Constants.LVD: self.move(LVD_IND, C1, C2)
-            case Constants.THR: self.move(THR_IND, C1, C3)
-            case Constants.THL: self.move(THL_IND, C1, C3)
-            case Constants.BHR: self.move(BHR_IND, C1, C3)
-            case Constants.BHL: self.move(BHL_IND, C1, C3)
-            case Constants.FC: self.move(FC_IND, C2, C3)
-            case Constants.FCC: self.move(FCC_IND, C2, C3)
-            case Constants.BC: self.move(BC_IND, C2, C3)
-            case Constants.BCC: self.move(BCC_IND, C2, C3)
+            case RVU: self.move(RVU_IND, C1, C2)
+            case RVD: self.move(RVD_IND, C1, C2)
+            case LVU: self.move(LVU_IND, C1, C2)
+            case LVD: self.move(LVD_IND, C1, C2)
+            case THR: self.move(THR_IND, C1, C3)
+            case THL: self.move(THL_IND, C1, C3)
+            case BHR: self.move(BHR_IND, C1, C3)
+            case BHL: self.move(BHL_IND, C1, C3)
+            case FC: self.move(FC_IND, C2, C3)
+            case FCC: self.move(FCC_IND, C2, C3)
+            case BC: self.move(BC_IND, C2, C3)
+            case BCC: self.move(BCC_IND, C2, C3)
             case _: print("Invalid move")
 
     def undo_move(self, move):
         match move:
-            case Constants.RVU: self.move(RVD_IND, C1, C2)
-            case Constants.RVD: self.move(RVU_IND, C1, C2)
-            case Constants.LVU: self.move(LVD_IND, C1, C2)
-            case Constants.LVD: self.move(LVU_IND, C1, C2)
-            case Constants.THR: self.move(THL_IND, C1, C3)
-            case Constants.THL: self.move(THR_IND, C1, C3)
-            case Constants.BHR: self.move(BHL_IND, C1, C3)
-            case Constants.BHL: self.move(BHR_IND, C1, C3)
-            case Constants.FC: self.move(FCC_IND, C2, C3)
-            case Constants.FCC: self.move(FC_IND, C2, C3)
-            case Constants.BC: self.move(BCC_IND, C2, C3)
-            case Constants.BCC: self.move(BC_IND, C2, C3)
+            case RVU: self.move(RVD_IND, C1, C2)
+            case RVD: self.move(RVU_IND, C1, C2)
+            case LVU: self.move(LVD_IND, C1, C2)
+            case LVD: self.move(LVU_IND, C1, C2)
+            case THR: self.move(THL_IND, C1, C3)
+            case THL: self.move(THR_IND, C1, C3)
+            case BHR: self.move(BHL_IND, C1, C3)
+            case BHL: self.move(BHR_IND, C1, C3)
+            case FC: self.move(FCC_IND, C2, C3)
+            case FCC: self.move(FC_IND, C2, C3)
+            case BC: self.move(BCC_IND, C2, C3)
+            case BCC: self.move(BC_IND, C2, C3)
             case _: print("Invalid move")
 
     def possible_moves(self, last_move=None):
         if last_move:
             return self.prune_moves(last_move)
-        return Constants.MOVES
+        return MOVES
 
     def prune_moves(self, last_move):
         match last_move:
-            case Constants.RVU: return Constants.RVU_MOVES
-            case Constants.RVD: return Constants.RVD_MOVES
-            case Constants.LVU: return Constants.LVU_MOVES
-            case Constants.LVD: return Constants.LVD_MOVES
-            case Constants.THR: return Constants.THR_MOVES
-            case Constants.THL: return Constants.THL_MOVES
-            case Constants.BHR: return Constants.BHR_MOVES
-            case Constants.BHL: return Constants.BHL_MOVES
-            case Constants.FC: return Constants.FC_MOVES
-            case Constants.FCC: return Constants.FCC_MOVES
-            case Constants.BC: return Constants.BC_MOVES
-            case Constants.BCC: return Constants.BCC_MOVES
+            case RVU: return RVU_MOVES
+            case RVD: return RVD_MOVES
+            case LVU: return LVU_MOVES
+            case LVD: return LVD_MOVES
+            case THR: return THR_MOVES
+            case THL: return THL_MOVES
+            case BHR: return BHR_MOVES
+            case BHL: return BHL_MOVES
+            case FC: return FC_MOVES
+            case FCC: return FCC_MOVES
+            case BC: return BC_MOVES
+            case BCC: return BCC_MOVES
             case _: return []
     
     def cube_state_to_key(self):
@@ -258,15 +271,15 @@ class Cube:
 
     def convert_move(self, move):
         match move:
-            case Constants.RVU: return Constants.RVD 
-            case Constants.RVD: return Constants.RVU
-            case Constants.LVU: return Constants.LVD
-            case Constants.LVD: return Constants.LVU
-            case Constants.THR: return Constants.THL
-            case Constants.THL: return Constants.THR
-            case Constants.BHR: return Constants.BHL
-            case Constants.BHL: return Constants.BHR
-            case Constants.FC: return Constants.FCC 
-            case Constants.FCC: return Constants.FC
-            case Constants.BC: return Constants.BCC
-            case Constants.BCC: return Constants.BC
+            case RVU: return RVD 
+            case RVD: return RVU
+            case LVU: return LVD
+            case LVD: return LVU
+            case THR: return THL
+            case THL: return THR
+            case BHR: return BHL
+            case BHL: return BHR
+            case FC: return FCC 
+            case FCC: return FC
+            case BC: return BCC
+            case BCC: return BC
