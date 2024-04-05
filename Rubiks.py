@@ -1,3 +1,10 @@
+"""
+Rubiks.py
+Purpose: This file contains the Cube class which is used to represent the Rubik's Cube. 
+It contains methods to solve the cube and manipulate the cube.
+Authors: Sebastian Maliczewski, Shayne Prakash
+"""
+
 from Corner import Corner
 import Constants
 from Constants import *
@@ -16,6 +23,7 @@ class Cube:
         self.memo = {}
         self.common_keys = None
 
+    #Sets the initial state of the cube based on user input
     def set_initial_state(self):
         inputted = False 
         while not inputted:
@@ -25,15 +33,19 @@ class Cube:
             if choice == "Y":
                 print("Enter the file name: ")
                 file_name = input().strip()
-                with open(file_name, "r") as file:
-                    for line in file:
-                        corner_colors = line.strip().upper().split()
-                        corner_combo = Corner(corner_colors)
-                        if corner_combo.is_valid_corner():
-                            corners.append(Corner(corner_colors))
-                        else:
-                            print("Invalid corner colors. Please try again.")
-                            break
+                try: 
+                    with open(file_name, "r") as file:
+                        for line in file:
+                            corner_colors = line.strip().upper().split()
+                            corner_combo = Corner(corner_colors)
+                            if corner_combo.is_valid_corner():
+                                corners.append(Corner(corner_colors))
+                            else:
+                                print("Invalid corner colors. Please try again.")
+                                break
+                except FileNotFoundError:
+                    print("File not found. Please try again.")
+                    continue
             else:  
                 print("Enter the colors of each corner on the cube.")
                 print("Use W for White, G for Green, R for Red, B for Blue, O for Orange, and Y for Yellow.")
@@ -63,7 +75,7 @@ class Cube:
                     return False     
         return True
 
-    def set_final_state(self): #test
+    def set_final_state(self): 
         final_cube = []
         for corner in Constants.SOLVED_CUBE:
             c1 = corner[0]
@@ -74,10 +86,15 @@ class Cube:
                 final_cube.append(new_corner)
         return final_cube  
 
-    def is_solved(self):
-        if (self.side_solved(FRONT, 0) and self.side_solved(BACK, 0) and 
+    def get_color(self, index, color_index):
+        return self.cube[index].colors[color_index]
+
+    def is_solved(self, key):
+        """if (self.side_solved(FRONT, 0) and self.side_solved(BACK, 0) and 
             self.side_solved(TOP, 1) and self.side_solved(BOTTOM, 1) and 
             self.side_solved(RIGHT, 2) and self.side_solved(LEFT, 2)):
+            return True"""
+        if key == "365465461361325425421321":
             return True
         return False
 
@@ -106,28 +123,20 @@ class Cube:
         corner.colors[c1] = corner.colors[c2]
         corner.colors[c2] = temp
 
-    def solve_cube_outer(self):
-        for depth_limit in range(1, self.max_depth_limit + 1):
-            self.max_depth = depth_limit
-            self.memo.clear()
-            self.move_set = []
-            if self.solve_cube(0):
-                return True
-        return False
-
+    #Function to solve the initial cube
     def solve_cube(self, depth = 0, last_move = None, final_cube = None):
+        if depth >= self.max_depth:
+            return False
+
         cube_key = self.cube_state_to_key()
 
         if cube_key in self.memo and self.memo[cube_key] == depth:
             return False
 
-        if self.is_solved() or cube_key == final_cube.common_keys:
+        if self.is_solved(cube_key) or cube_key == final_cube.common_keys:
             self.memo[cube_key] = depth
             self.common_keys = True
             return True
-        
-        if depth >= self.max_depth:
-            return False
 
         solution_found = False
         for move in self.possible_moves(last_move):
@@ -142,21 +151,20 @@ class Cube:
             self.memo[cube_key] = depth
         return solution_found
 
+    #Function to solve the final cube checking for common keys.
     def reverse_solve_cube(self, depth = 0, last_move = None, cube = None):
+        if depth >= self.max_depth:
+            return False
+
         cube_key = self.cube_state_to_key()
 
         if cube_key in self.memo and self.memo[cube_key] == depth:
             return False
 
-        common_keys = set(self.memo.keys()) & set(cube.memo.keys())
-
-        if common_keys:
-            self.common_keys = list(common_keys)[0]
+        if cube_key in cube.memo:
+            self.common_keys = cube_key
             self.memo[cube_key] = depth
             return True
-        
-        if depth >= self.max_depth:
-            return False
 
         solution_found = False
         for move in self.possible_moves(last_move):
@@ -171,7 +179,11 @@ class Cube:
             self.memo[cube_key] = depth
         return solution_found
     
+    #Function to get the final moveset when a solution is finally found. 
     def reverse_solve_cube_v2(self, depth = 0, last_move = None):
+        if depth >= self.max_depth:
+            return False
+        
         cube_key = self.cube_state_to_key()
 
         if cube_key in self.memo and self.memo[cube_key] == depth:
@@ -180,9 +192,6 @@ class Cube:
         if cube_key == self.common_keys:
             self.memo[cube_key] = depth
             return True
-        
-        if depth >= self.max_depth:
-            return False
 
         solution_found = False
         for move in self.possible_moves(last_move):
@@ -205,34 +214,34 @@ class Cube:
 
     def apply_move(self, move):
         match move:
-            case RVU: self.move(RVU_IND, C1, C2)
-            case RVD: self.move(RVD_IND, C1, C2)
-            case LVU: self.move(LVU_IND, C1, C2)
-            case LVD: self.move(LVD_IND, C1, C2)
-            case THR: self.move(THR_IND, C1, C3)
-            case THL: self.move(THL_IND, C1, C3)
-            case BHR: self.move(BHR_IND, C1, C3)
-            case BHL: self.move(BHL_IND, C1, C3)
-            case FC: self.move(FC_IND, C2, C3)
-            case FCC: self.move(FCC_IND, C2, C3)
-            case BC: self.move(BC_IND, C2, C3)
-            case BCC: self.move(BCC_IND, C2, C3)
+            case Constants.RVU: self.move(RVU_IND, C1, C2)
+            case Constants.RVD: self.move(RVD_IND, C1, C2)
+            case Constants.LVU: self.move(LVU_IND, C1, C2)
+            case Constants.LVD: self.move(LVD_IND, C1, C2)
+            case Constants.THR: self.move(THR_IND, C1, C3)
+            case Constants.THL: self.move(THL_IND, C1, C3)
+            case Constants.BHR: self.move(BHR_IND, C1, C3)
+            case Constants.BHL: self.move(BHL_IND, C1, C3)
+            case Constants.FC: self.move(FC_IND, C2, C3)
+            case Constants.FCC: self.move(FCC_IND, C2, C3)
+            case Constants.BC: self.move(BC_IND, C2, C3)
+            case Constants.BCC: self.move(BCC_IND, C2, C3)
             case _: print("Invalid move")
 
     def undo_move(self, move):
         match move:
-            case RVU: self.move(RVD_IND, C1, C2)
-            case RVD: self.move(RVU_IND, C1, C2)
-            case LVU: self.move(LVD_IND, C1, C2)
-            case LVD: self.move(LVU_IND, C1, C2)
-            case THR: self.move(THL_IND, C1, C3)
-            case THL: self.move(THR_IND, C1, C3)
-            case BHR: self.move(BHL_IND, C1, C3)
-            case BHL: self.move(BHR_IND, C1, C3)
-            case FC: self.move(FCC_IND, C2, C3)
-            case FCC: self.move(FC_IND, C2, C3)
-            case BC: self.move(BCC_IND, C2, C3)
-            case BCC: self.move(BC_IND, C2, C3)
+            case Constants.RVU: self.move(RVD_IND, C1, C2)
+            case Constants.RVD: self.move(RVU_IND, C1, C2)
+            case Constants.LVU: self.move(LVD_IND, C1, C2)
+            case Constants.LVD: self.move(LVU_IND, C1, C2)
+            case Constants.THR: self.move(THL_IND, C1, C3)
+            case Constants.THL: self.move(THR_IND, C1, C3)
+            case Constants.BHR: self.move(BHL_IND, C1, C3)
+            case Constants.BHL: self.move(BHR_IND, C1, C3)
+            case Constants.FC: self.move(FCC_IND, C2, C3)
+            case Constants.FCC: self.move(FC_IND, C2, C3)
+            case Constants.BC: self.move(BCC_IND, C2, C3)
+            case Constants.BCC: self.move(BC_IND, C2, C3)
             case _: print("Invalid move")
 
     def possible_moves(self, last_move=None):
@@ -242,18 +251,18 @@ class Cube:
 
     def prune_moves(self, last_move):
         match last_move:
-            case RVU: return RVU_MOVES
-            case RVD: return RVD_MOVES
-            case LVU: return LVU_MOVES
-            case LVD: return LVD_MOVES
-            case THR: return THR_MOVES
-            case THL: return THL_MOVES
-            case BHR: return BHR_MOVES
-            case BHL: return BHL_MOVES
-            case FC: return FC_MOVES
-            case FCC: return FCC_MOVES
-            case BC: return BC_MOVES
-            case BCC: return BCC_MOVES
+            case Constants.RVU: return RVU_MOVES
+            case Constants.RVD: return RVD_MOVES
+            case Constants.LVU: return LVU_MOVES
+            case Constants.LVD: return LVD_MOVES
+            case Constants.THR: return THR_MOVES
+            case Constants.THL: return THL_MOVES
+            case Constants.BHR: return BHR_MOVES
+            case Constants.BHL: return BHL_MOVES
+            case Constants.FC: return FC_MOVES
+            case Constants.FCC: return FCC_MOVES
+            case Constants.BC: return BC_MOVES
+            case Constants.BCC: return BCC_MOVES
             case _: return []
     
     def cube_state_to_key(self):
@@ -271,15 +280,15 @@ class Cube:
 
     def convert_move(self, move):
         match move:
-            case RVU: return RVD 
-            case RVD: return RVU
-            case LVU: return LVD
-            case LVD: return LVU
-            case THR: return THL
-            case THL: return THR
-            case BHR: return BHL
-            case BHL: return BHR
-            case FC: return FCC 
-            case FCC: return FC
-            case BC: return BCC
-            case BCC: return BC
+            case Constants.RVU: return RVD 
+            case Constants.RVD: return RVU
+            case Constants.LVU: return LVD
+            case Constants.LVD: return LVU
+            case Constants.THR: return THL
+            case Constants.THL: return THR
+            case Constants.BHR: return BHL
+            case Constants.BHL: return BHR
+            case Constants.FC: return FCC 
+            case Constants.FCC: return FC
+            case Constants.BC: return BCC
+            case Constants.BCC: return BC
