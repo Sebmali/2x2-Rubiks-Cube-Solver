@@ -90,10 +90,6 @@ class Cube:
         return self.cube[index].colors[color_index]
 
     def is_solved(self, key):
-        """if (self.side_solved(FRONT, 0) and self.side_solved(BACK, 0) and 
-            self.side_solved(TOP, 1) and self.side_solved(BOTTOM, 1) and 
-            self.side_solved(RIGHT, 2) and self.side_solved(LEFT, 2)):
-            return True"""
         if key == "365465461361325425421321":
             return True
         return False
@@ -109,7 +105,7 @@ class Cube:
         for corner in self.final_cube:
             print(corner.colors)
 
-    def move(self, move_corners, move1, move2): #placeholder for above functions
+    def move(self, move_corners, move1, move2): 
         for index in move_corners:
             self.swap_colors(self.cube[index], move1, move2)
         temp_cube0 = self.cube[move_corners[0]]
